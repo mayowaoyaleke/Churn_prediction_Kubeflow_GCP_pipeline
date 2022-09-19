@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/linear-hangar-362513/mlimage', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push','gcr.io/linear-hangar-362513/mlimage']
