@@ -17,8 +17,8 @@ def create_pipeline(
     #example gen
     output = example_gen_pb2.Output(
         split_config= example_gen_pb2.SplitConfig(splits=[
-            example_gen_pb2.SplitConfig.Split(name = 'train', hash_bucket = 8),
-            example_gen_pb2.SplitConfig.Split(name = 'eval', hash_bucket = 2)
+            example_gen_pb2.SplitConfig.Split(name = 'train', hash_buckets = 8),
+            example_gen_pb2.SplitConfig.Split(name = 'eval', hash_buckets = 2)
         ])
     )
 
