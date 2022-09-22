@@ -1,5 +1,6 @@
 
 import statistics
+from urllib.parse import scheme_chars
 from wsgiref.validate import validator
 from tfx.proto import example_gen_pb2
 from tfx.orchestration import pipeline
@@ -8,6 +9,8 @@ from tfx.components import CsvExampleGen
 from tfx.components import StatisticsGen
 from tfx.components import SchemaGen
 from tfx.components import ExampleValidator
+from tfx.components import Transform
+churn_transform_module_file = 'churn_transform.py'
 
 def create_pipeline(
     pipeline_name,
@@ -42,6 +45,12 @@ def create_pipeline(
     validator = ExampleValidator(statistics=statistics_gen.outputs['statistics'],
     schema= schema_gen.outputs['schema'])
     components.append(validator)
+
+    #transform
+    transform = Transform(examples=statistics_gen.outputs['examples'],
+    schema= schema_gen.outputs['schema'],
+    module_file= churn_transform_module_file)
+    components.append(transform)
 
     return pipeline.Pipeline(
         pipeline_name = pipeline_name,
