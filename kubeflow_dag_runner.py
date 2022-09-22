@@ -2,8 +2,10 @@ import os
 from absl import logging
 from tfx.orchestration.kubeflow import kubeflow_dag_runner
 from pipeline import create_pipeline
+import time
+suffix = int(time.time())
 
-PIPELINE_NAME = 'churn_prediction'
+PIPELINE_NAME = f'churn_prediction_{suffix}'
 PIPELINE_ROOT = 'gs://linear_hangar_pipeline/metadata'
 DATA_PATH = 'gs://linear_hangar_pipeline/data'
 SERVING_DIR = 'gs://linear_hangar_pipeline/models'
@@ -28,3 +30,4 @@ def run():
 if __name__ == '__main__':
     logging.set_verbosity(logging.INFO)
     run()
+ 
