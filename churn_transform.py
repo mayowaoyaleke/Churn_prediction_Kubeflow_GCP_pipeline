@@ -3,7 +3,7 @@ import tensorflow as tf
 import tensorflow_transform as tft
 
 NUMERIC_FEATURE_KEYS = [
-    'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','isActiveMember','NumOfProducts','RowNumber','Tenure'
+    'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
 ]
 
 VOCAB_FEATURE_DICT = {
