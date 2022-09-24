@@ -46,8 +46,8 @@ def create_pipeline(
     schema= schema_gen.outputs['schema'])
     components.append(validator)
 
-    #transform
-    transform = Transform(examples=statistics_gen.outputs['examples'],
+    #transform  
+    transform = Transform(examples=example_gen.outputs['examples'],
     schema= schema_gen.outputs['schema'],
     module_file= churn_transform_module_file)
     components.append(transform)
@@ -63,3 +63,4 @@ def create_pipeline(
 
 
 
+# tfx pipeline create --pipeline-path=kubeflow_dag_runner.py --endpoint=https://25430b44e036f94d-dot-us-central1.pipelines.googleusercontent.com/
