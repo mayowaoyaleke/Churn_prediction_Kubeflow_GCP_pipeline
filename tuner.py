@@ -70,7 +70,7 @@ def model_builder(hp):
     deep = tf.keras.layers.concatenate([input_numeric, input_categorical])
 
     for i in range(num_hidden_layers):
-        num_nodes = hp.Int('unit'+ str(i), min_value = 8, max_value=256, steps = 64)
+        num_nodes = hp.Int('unit'+ str(i), min_value = 8, max_value=256, step = 64)
         deep = tf.keras.layers.Dense(num_nodes, activation = 'relu')(deep)
 
     output = tf.keras.layers.Dense(1, activation ='sigmoid')(deep)
