@@ -62,7 +62,8 @@ def create_pipeline(
     transform_graph= transform.outputs['transform_graph'],
     module_file= tuner_module_file,
     train_args= trainer_pb2.TrainArgs(splits = ['train'], num_steps = 200),
-    eval_args= trainer_pb2.TrainArgs(splits = ['eval'], num_steps = 50))
+    eval_args= trainer_pb2.EvalArgs(splits = ['eval'], num_steps = 50)
+    )
     components.append(tuner)
 
     return pipeline.Pipeline(
