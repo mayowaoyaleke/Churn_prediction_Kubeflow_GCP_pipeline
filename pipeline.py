@@ -10,7 +10,13 @@ from tfx.components import StatisticsGen
 from tfx.components import SchemaGen
 from tfx.components import ExampleValidator
 from tfx.components import Transform
+from tfx.components import Tuner
+from tfx.proto import trainer_pb2
+
+from macpath import split
+
 churn_transform_module_file = 'churn_transform.py'
+tuner_module_file = 'tuner.py'
 
 def create_pipeline(
     pipeline_name,
@@ -51,6 +57,15 @@ def create_pipeline(
     schema= schema_gen.outputs['schema'],
     module_file= churn_transform_module_file)
     components.append(transform)
+
+    #tuner
+    tuner = Tuner(examples=transform.outputs['transformed_examples'],
+    schema= schema_gen.outputs['schema'],
+    transform_graph= transform.outputs['transform_graph'],
+    module_file= tuner_module_file,
+    train_args= trainer_pb2.TrainArgs(splits = ['train'], num_steps = 200),
+    eval_args= trainer_pb2.TrainArgs(splits = ['eval'], num_steps = 50))
+    components.append(tuner)
 
     return pipeline.Pipeline(
         pipeline_name = pipeline_name,
