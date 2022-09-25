@@ -13,8 +13,6 @@ from tfx.components import Transform
 from tfx.components import Tuner
 from tfx.proto import trainer_pb2
 
-from macpath import split
-
 churn_transform_module_file = 'churn_transform.py'
 tuner_module_file = 'tuner.py'
 
