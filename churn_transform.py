@@ -32,4 +32,4 @@ def preprocessing_fn(inputs):
 
 
     outputs[transformed_name(LABEL_KEY)] = tf.cast(inputs[LABEL_KEY], tf.float32)
-    return outputs
+    return outputs 

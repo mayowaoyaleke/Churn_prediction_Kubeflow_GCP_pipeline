@@ -35,6 +35,7 @@ def _gzip_reader_fn(filenames):
     return tf.data.TFRecordDataset(filenames, compression_type= 'GZIP')
 
 def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
+    
     transformed_feature_spec = (
         tf_transform_output.transformed_feature_spec().copy()
     )
