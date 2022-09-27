@@ -1,1 +1,1 @@
-# Taxi_tip_prediction_pipeline
+# Churn_prediction_pipeline
