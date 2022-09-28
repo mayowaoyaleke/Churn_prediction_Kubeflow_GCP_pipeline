@@ -11,10 +11,12 @@ from tfx.components import SchemaGen
 from tfx.components import ExampleValidator
 from tfx.components import Transform
 from tfx.components import Tuner
+from tfx.components import Trainer
 from tfx.proto import trainer_pb2
 
 churn_transform_module_file = 'churn_transform.py'
 tuner_module_file = 'tuner.py'
+trainer_module_file = 'trainer.py'
 
 def create_pipeline(
     pipeline_name,
@@ -57,14 +59,24 @@ def create_pipeline(
     components.append(transform)
 
     #tuner
-    tuner = Tuner(examples=transform.outputs['transformed_examples'],
+    # tuner = Tuner(examples=transform.outputs['transformed_examples'],
+    # schema= schema_gen.outputs['schema'],
+    # transform_graph= transform.outputs['transform_graph'],
+    # module_file= tuner_module_file,
+    # train_args= trainer_pb2.TrainArgs(splits = ['train'], num_steps = 200),
+    # eval_args= trainer_pb2.EvalArgs(splits = ['eval'], num_steps = 50)
+    # )
+    # components.append(tuner)
+
+    #trainer
+    trainer = Trainer(examples=transform.outputs['transformed_examples'],
     schema= schema_gen.outputs['schema'],
     transform_graph= transform.outputs['transform_graph'],
-    module_file= tuner_module_file,
-    train_args= trainer_pb2.TrainArgs(splits = ['train'], num_steps = 200),
-    eval_args= trainer_pb2.EvalArgs(splits = ['eval'], num_steps = 50)
+    module_file= trainer_module_file,
+    train_args= trainer_pb2.TrainArgs(splits = ['train'],num_steps = 200),
+    eval_args= trainer_pb2.EvalArgs(splits = ['eval'],num_steps = 50)
     )
-    components.append(tuner)
+    components.append(trainer)
 
     return pipeline.Pipeline(
         pipeline_name = pipeline_name,
