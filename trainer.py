@@ -92,7 +92,7 @@ def model_builder(hp):
 
 #Run
 def run_fn(fn_args: FnArgs) -> None:
-    tensorboard_callback = tf.keras.tensorboard_callbacks.TensorBoard(
+    tensorboard_callback = tf.keras.TensorBoard(
       log_dir = fn_args.model_run_dir, update_freq = 'batch'
     )
     es = tf.keras.callbacks.EarlyStopping(monitor = 'val_binary_accuracy', mode = 'max', verbose = 1, patience = 10)
