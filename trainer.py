@@ -52,7 +52,7 @@ def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 
     return dataset
 
 #Build model
-def model_builder(hp):
+def model_builder():
     
     num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value= 5)
     hp_learning_rate = hp.Choice('learning_rate', values = [1e-2,1e-3,1e-4])
