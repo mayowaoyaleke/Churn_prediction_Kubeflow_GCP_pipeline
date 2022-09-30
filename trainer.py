@@ -1,4 +1,5 @@
 #Define imports
+from pyexpat import model
 from kerastuner.engine import base_tuner
 import kerastuner as kt
 from tensorflow import keras
@@ -6,6 +7,8 @@ from typing import NamedTuple, Dict, Text, Any
 from tfx.components.trainer.fn_args_utils import FnArgs
 import tensorflow as tf
 import tensorflow_transform as tft
+import sklearn
+from sklearn.ensemble import RandomForestClassifier
 
 NUMERIC_FEATURE_KEYS = [
     'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
@@ -53,38 +56,40 @@ def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 
 
 #Build model
 def model_builder():
+    model = RandomForestClassifier()
+
     
-    num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value= 5)
-    hp_learning_rate = hp.Choice('learning_rate', values = [1e-2,1e-3,1e-4])
+    # num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value= 5)
+    # hp_learning_rate = hp.Choice('learning_rate', values = [1e-2,1e-3,1e-4])
 
-    input_numeric = [
-        tf.keras.layers.Input(name = transformed_name(colname), shape=(1,), dtype= tf.float32) for colname in NUMERIC_FEATURE_KEYS
-    ]
+    # input_numeric = [
+    #     tf.keras.layers.Input(name = transformed_name(colname), shape=(1,), dtype= tf.float32) for colname in NUMERIC_FEATURE_KEYS
+    # ]
 
-    input_categorical = [
-        tf.keras.layers.Input(name = transformed_name(colname), shape=(vocab_size + NUM_OOV_BUCKETS,), dtype= tf.float32) for colname, vocab_size in VOCAB_FEATURE_DICT.items()
-    ]
+    # input_categorical = [
+    #     tf.keras.layers.Input(name = transformed_name(colname), shape=(vocab_size + NUM_OOV_BUCKETS,), dtype= tf.float32) for colname, vocab_size in VOCAB_FEATURE_DICT.items()
+    # ]
 
-    input_numeric = tf.keras.layers.concatenate(input_numeric)
-    input_categorical = tf.keras.layers.concatenate(input_categorical)
+    # input_numeric = tf.keras.layers.concatenate(input_numeric)
+    # input_categorical = tf.keras.layers.concatenate(input_categorical)
 
-    deep = tf.keras.layers.concatenate([input_numeric, input_categorical])
+    # deep = tf.keras.layers.concatenate([input_numeric, input_categorical])
 
-    for i in range(num_hidden_layers):
-        num_nodes = hp.Int('unit'+ str(i), min_value = 8, max_value=256, step = 64)
-        deep = tf.keras.layers.Dense(num_nodes, activation = 'relu')(deep)
+    # for i in range(num_hidden_layers):
+    #     num_nodes = hp.Int('unit'+ str(i), min_value = 8, max_value=256, step = 64)
+    #     deep = tf.keras.layers.Dense(num_nodes, activation = 'relu')(deep)
 
-    output = tf.keras.layers.Dense(1, activation ='sigmoid')(deep)
+    # output = tf.keras.layers.Dense(1, activation ='sigmoid')(deep)
 
-    input_layers = input_numeric + input_categorical
+    # input_layers = input_numeric + input_categorical
 
-    model = tf.keras.Model(input_layers, output)
+    # model = tf.keras.Model(input_layers, output)
 
-    model.compile(
-        loss = 'binary_crossentropy',
-        optimizer = tf.keras.optimizers.Adam(learning_rate= hp_learning_rate),
-        metrics = 'binary_accuracy'
-    )
+    # model.compile(
+    #     loss = 'binary_crossentropy',
+    #     optimizer = tf.keras.optimizers.Adam(learning_rate= hp_learning_rate),
+    #     metrics = 'binary_accuracy'
+    # )
 
     #print model
     model.summary()
