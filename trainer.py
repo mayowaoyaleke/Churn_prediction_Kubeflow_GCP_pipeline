@@ -1,7 +1,7 @@
 #Define imports
 from pyexpat import model
-from kerastuner.engine import base_tuner
-import kerastuner as kt
+# from kerastuner.engine import base_tuner
+# import kerastuner as kt
 from tensorflow import keras
 from typing import NamedTuple, Dict, Text, Any
 from tfx.components.trainer.fn_args_utils import FnArgs
@@ -92,7 +92,7 @@ def model_builder():
     # )
 
     #print model
-    # model.summary()
+    # Trmodel.summary()
     return model
 
 #Run
@@ -110,13 +110,19 @@ def run_fn(fn_args: FnArgs) -> None:
     train_set = _input_fn(fn_args.train_files, tf_transform_output, 10)
     eval_set = _input_fn(fn_args.eval_files, tf_transform_output, 10)
 
+    x_train, y_train = _input_fn(train_set)
+    x_eval, y_eval = _input_fn(eval_set)
+
     # Build the model
     model = model_builder()
 
     # Train the model
-    model.fit(x = train_set,
-    validation_data = eval_set,
-    callbacks = [tensorboard_callback, es, mc],
-    epochs = 100)
+    model.fit(X=x_train,y=y_train)
 
+    # model.fit(x = train_set,
+    # validation_data = eval_set,
+    # callbacks = [tensorboard_callback, es, mc],
+    # epochs = 100)
+
+    score = model.score(x_eval, y_eval)
     
