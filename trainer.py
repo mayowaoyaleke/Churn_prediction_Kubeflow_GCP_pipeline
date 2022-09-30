@@ -9,6 +9,18 @@ import tensorflow as tf
 import tensorflow_transform as tft
 import sklearn
 from sklearn.ensemble import RandomForestClassifier
+from tfx.components.trainer.fn_args_utils import DataAccessor
+import os
+import pickle
+from typing import Tuple
+from tfx.components.trainer.fn_args_utils import DataAccessor
+from tfx.components.trainer.fn_args_utils import FnArgs
+from tfx.dsl.io import fileio
+from tfx.utils import io_utils
+from tfx_bsl.tfxio import dataset_options
+from tensorflow_metadata.proto.v0 import schema_pb2
+import numpy as np
+import absl
 
 NUMERIC_FEATURE_KEYS = [
     'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
@@ -17,6 +29,12 @@ NUMERIC_FEATURE_KEYS = [
 VOCAB_FEATURE_DICT = {
     'Gender':2,'Geography':3,'Surname':1169
 }
+
+
+_FEATURE_KEYS = [
+     'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure', 'Gender','Geography','Surname'
+]
+_LABEL_KEY = 'Exited'
 
 NUM_OOV_BUCKETS = 2
 
@@ -35,24 +53,56 @@ def transformed_name(key):
 def _gzip_reader_fn(filenames):
     return tf.data.TFRecordDataset(filenames, compression_type= 'GZIP')
 
-#Load data
-def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
-    # Get post transform feature specification
-    transformed_feature_spec = (
-        tf_transform_output.transformed_feature_spec().copy()
-    )
 
-    #create batches of features and labels
-    dataset = tf.data.experimental.make_batched_features_dataset(
-        file_pattern= file_pattern,
-        batch_size= batch_size,
-        features= transformed_feature_spec,
-        reader = _gzip_reader_fn,
-        num_epochs= num_epochs,
-        label_key= transformed_name(LABEL_KEY)
-    )
 
-    return dataset
+
+
+
+#Load data#################################################################################################
+# def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
+#     # Get post transform feature specification
+#     transformed_feature_spec = (
+#         tf_transform_output.transformed_feature_spec().copy()
+#     )
+
+#     #create batches of features and labels
+#     dataset = tf.data.experimental.make_batched_features_dataset(
+#         file_pattern= file_pattern,
+#         batch_size= batch_size,
+#         features= transformed_feature_spec,
+#         reader = _gzip_reader_fn,
+#         num_epochs= num_epochs,
+#         label_key= transformed_name(LABEL_KEY)
+#     )
+
+#     return dataset
+
+
+def _input_fn(
+    file_pattern: str,
+    data_accessor: DataAccessor,
+    schema: schema_pb2.Schema,
+    batch_size: int = 20,
+) -> Tuple[np.ndarray, np.ndarray]:
+
+  record_batch_iterator = data_accessor.record_batch_factory(
+      file_pattern,
+      dataset_options.RecordBatchesOptions(batch_size=batch_size, num_epochs=1),
+      schema)
+
+  feature_list = []
+  label_list = []
+    
+  for record_batch in record_batch_iterator:
+    record_dict = {}
+    for column, field in zip(record_batch, record_batch.schema):
+      record_dict[field.name] = column.flatten()
+
+    label_list.append(record_dict[_LABEL_KEY])
+    features = [record_dict[key] for key in _FEATURE_KEYS]
+    feature_list.append(np.stack(features, axis=-1))
+
+  return np.concatenate(feature_list), np.concatenate(label_list)
 
 #Build model
 def model_builder():
@@ -103,6 +153,9 @@ def run_fn(fn_args: FnArgs) -> None:
     es = tf.keras.callbacks.EarlyStopping(monitor = 'val_binary_accuracy', mode = 'max', verbose = 1, patience = 10)
     mc = tf.keras.callbacks.ModelCheckpoint(fn_args.serving_model_dir, monitor = 'val_binary_accuracy', mode = 'max', verbose =1, save_best_only = True)
 
+    #
+    schema = io_utils.parse_pbtxt_file(fn_args.schema_file, schema_pb2.Schema())
+
     # Load tf_transform_output
     tf_transform_output = tft.TFTransformOutput(fn_args.transform_graph_path)
 
@@ -110,19 +163,34 @@ def run_fn(fn_args: FnArgs) -> None:
     train_set = _input_fn(fn_args.train_files, tf_transform_output, 10)
     eval_set = _input_fn(fn_args.eval_files, tf_transform_output, 10)
 
-    x_train, y_train = train_set
-    x_eval, y_eval = eval_set
+    x_train, y_train = _input_fn(fn_args.train_files, fn_args.data_accessor,
+                               schema)
+    x_eval, y_eval = _input_fn(fn_args.eval_files, fn_args.data_accessor, schema)
 
     # Build the model
     model = model_builder()
 
     # Train the model
-    model.fit(X=x_train,y=y_train)
+    # model.fit(X=x_train,y=y_train)
 
-    # model.fit(x = train_set,
-    # validation_data = eval_set,
-    # callbacks = [tensorboard_callback, es, mc],
-    # epochs = 100)
+    # # model.fit(x = train_set,
+    # # validation_data = eval_set,
+    # # callbacks = [tensorboard_callback, es, mc],
+    # # epochs = 100)
+
+    # score = model.score(x_eval, y_eval)
+    
+    model.feature_keys = _FEATURE_KEYS
+    model.label_key = _LABEL_KEY
+    model.fit(x_train, y_train)
+    absl.logging.info(model)
 
     score = model.score(x_eval, y_eval)
+    absl.logging.info('Accuracy: %f', score)
     
+
+    # Export the model as a pickle named model.pkl. AI Platform Prediction expects
+  # sklearn model artifacts to follow this naming convention.
+    
+
+ 
