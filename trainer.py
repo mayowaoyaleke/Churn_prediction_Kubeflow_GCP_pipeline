@@ -92,7 +92,7 @@ def model_builder():
     # )
 
     #print model
-    model.summary()
+    # model.summary()
     return model
 
 #Run
