@@ -59,50 +59,50 @@ def _gzip_reader_fn(filenames):
 
 
 #Load data#################################################################################################
-# def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
-#     # Get post transform feature specification
-#     transformed_feature_spec = (
-#         tf_transform_output.transformed_feature_spec().copy()
-#     )
+def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
+    # Get post transform feature specification
+    transformed_feature_spec = (
+        tf_transform_output.transformed_feature_spec().copy()
+    )
 
-#     #create batches of features and labels
-#     dataset = tf.data.experimental.make_batched_features_dataset(
-#         file_pattern= file_pattern,
-#         batch_size= batch_size,
-#         features= transformed_feature_spec,
-#         reader = _gzip_reader_fn,
-#         num_epochs= num_epochs,
-#         label_key= transformed_name(LABEL_KEY)
-#     )
+    #create batches of features and labels
+    dataset = tf.data.experimental.make_batched_features_dataset(
+        file_pattern= file_pattern,
+        batch_size= batch_size,
+        features= transformed_feature_spec,
+        reader = _gzip_reader_fn,
+        num_epochs= num_epochs,
+        label_key= transformed_name(LABEL_KEY)
+    )
 
-#     return dataset
+    return dataset
 
 
-def _input_fn(
-    file_pattern: str,
-    data_accessor: DataAccessor,
-    schema: schema_pb2.Schema,
-    batch_size: int = 20,
-) -> Tuple[np.ndarray, np.ndarray]:
+# def _input_fn(
+#     file_pattern: str,
+#     data_accessor: DataAccessor,
+#     schema: schema_pb2.Schema,
+#     batch_size: int = 20,
+# ) -> Tuple[np.ndarray, np.ndarray]:
 
-  record_batch_iterator = data_accessor.record_batch_factory(
-      file_pattern,
-      dataset_options.RecordBatchesOptions(batch_size=batch_size, num_epochs=1),
-      schema)
+#   record_batch_iterator = data_accessor.record_batch_factory(
+#       file_pattern,
+#       dataset_options.RecordBatchesOptions(batch_size=batch_size, num_epochs=1),
+#       schema)
 
-  feature_list = []
-  label_list = []
+#   feature_list = []
+#   label_list = []
     
-  for record_batch in record_batch_iterator:
-    record_dict = {}
-    for column, field in zip(record_batch, record_batch.schema):
-      record_dict[field.name] = column.flatten()
+#   for record_batch in record_batch_iterator:
+#     record_dict = {}
+#     for column, field in zip(record_batch, record_batch.schema):
+#       record_dict[field.name] = column.flatten()
 
-    label_list.append(record_dict[_LABEL_KEY])
-    features = [record_dict[key] for key in _FEATURE_KEYS]
-    feature_list.append(np.stack(features, axis=-1))
+#     label_list.append(record_dict[_LABEL_KEY])
+#     features = [record_dict[key] for key in _FEATURE_KEYS]
+#     feature_list.append(np.stack(features, axis=-1))
 
-  return np.concatenate(feature_list), np.concatenate(label_list)
+#   return np.concatenate(feature_list), np.concatenate(label_list)
 
 #Build model
 def model_builder():
