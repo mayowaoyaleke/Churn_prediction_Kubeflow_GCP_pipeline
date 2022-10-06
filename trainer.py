@@ -59,7 +59,8 @@ def _gzip_reader_fn(filenames):
 
 
 #Load data#################################################################################################
-def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
+def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num_epochs= None, batch_size: int = 128,) -> tf.data.Dataset:
+
     # Get post transform feature specification
     transformed_feature_spec = (
         tf_transform_output.transformed_feature_spec().copy()
@@ -78,71 +79,9 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
     return dataset
 
 
-# def _input_fn(
-#     file_pattern: str,
-#     data_accessor: DataAccessor,
-#     schema: schema_pb2.Schema,
-#     batch_size: int = 20,
-# ) -> Tuple[np.ndarray, np.ndarray]:
-
-#   record_batch_iterator = data_accessor.record_batch_factory(
-#       file_pattern,
-#       dataset_options.RecordBatchesOptions(batch_size=batch_size, num_epochs=1),
-#       schema)
-
-#   feature_list = []
-#   label_list = []
-    
-#   for record_batch in record_batch_iterator:
-#     record_dict = {}
-#     for column, field in zip(record_batch, record_batch.schema):
-#       record_dict[field.name] = column.flatten()
-
-#     label_list.append(record_dict[_LABEL_KEY])
-#     features = [record_dict[key] for key in _FEATURE_KEYS]
-#     feature_list.append(np.stack(features, axis=-1))
-
-#   return np.concatenate(feature_list), np.concatenate(label_list)
-
 #Build model
 def model_builder():
     model = RandomForestClassifier()
-
-    
-    # num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value= 5)
-    # hp_learning_rate = hp.Choice('learning_rate', values = [1e-2,1e-3,1e-4])
-
-    # input_numeric = [
-    #     tf.keras.layers.Input(name = transformed_name(colname), shape=(1,), dtype= tf.float32) for colname in NUMERIC_FEATURE_KEYS
-    # ]
-
-    # input_categorical = [
-    #     tf.keras.layers.Input(name = transformed_name(colname), shape=(vocab_size + NUM_OOV_BUCKETS,), dtype= tf.float32) for colname, vocab_size in VOCAB_FEATURE_DICT.items()
-    # ]
-
-    # input_numeric = tf.keras.layers.concatenate(input_numeric)
-    # input_categorical = tf.keras.layers.concatenate(input_categorical)
-
-    # deep = tf.keras.layers.concatenate([input_numeric, input_categorical])
-
-    # for i in range(num_hidden_layers):
-    #     num_nodes = hp.Int('unit'+ str(i), min_value = 8, max_value=256, step = 64)
-    #     deep = tf.keras.layers.Dense(num_nodes, activation = 'relu')(deep)
-
-    # output = tf.keras.layers.Dense(1, activation ='sigmoid')(deep)
-
-    # input_layers = input_numeric + input_categorical
-
-    # model = tf.keras.Model(input_layers, output)
-
-    # model.compile(
-    #     loss = 'binary_crossentropy',
-    #     optimizer = tf.keras.optimizers.Adam(learning_rate= hp_learning_rate),
-    #     metrics = 'binary_accuracy'
-    # )
-
-    #print model
-    # Trmodel.summary()
     return model
 
 #Run
@@ -165,20 +104,10 @@ def run_fn(fn_args: FnArgs) -> None:
 
     x_train, y_train = _input_fn(fn_args.train_files, fn_args.data_accessor,
                                schema)
-    x_eval, y_eval = _input_fn(fn_args.eval_files, fn_args.data_accessor, schema)
+    x_eval, y_eval = _input_fn(fn_args.eval_files,schema)
 
     # Build the model
     model = model_builder()
-
-    # Train the model
-    # model.fit(X=x_train,y=y_train)
-
-    # # model.fit(x = train_set,
-    # # validation_data = eval_set,
-    # # callbacks = [tensorboard_callback, es, mc],
-    # # epochs = 100)
-
-    # score = model.score(x_eval, y_eval)
     
     model.feature_keys = _FEATURE_KEYS
     model.label_key = _LABEL_KEY
