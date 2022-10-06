@@ -59,7 +59,7 @@ def _gzip_reader_fn(filenames):
 
 
 #Load data#################################################################################################
-def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num_epochs= None, batch_size: int = 128,) -> tf.data.Dataset:
+def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num_epochs= None, batch_size: int = 200,) -> tf.data.Dataset:
 
     # Get post transform feature specification
     transformed_feature_spec = (
@@ -102,8 +102,8 @@ def run_fn(fn_args: FnArgs) -> None:
     train_set = _input_fn(fn_args.train_files, tf_transform_output, 10)
     eval_set = _input_fn(fn_args.eval_files, tf_transform_output, 10)
 
-    x_train, y_train = _input_fn(fn_args.train_files)
-    x_eval, y_eval = _input_fn(fn_args.eval_files)
+    x_train, y_train = _input_fn(fn_args.train_files,tf_transform_output,batch_size=32)
+    x_eval, y_eval = _input_fn(fn_args.eval_files,tf_transform_output,batch_size=32)
 
     # Build the model
     model = model_builder()
