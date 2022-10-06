@@ -59,7 +59,7 @@ def _gzip_reader_fn(filenames):
 
 
 #Load data#################################################################################################
-def _input_fn(file_pattern, tf_transform_output, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
+def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num_epochs= None, batch_size = 128) -> tf.data.Dataset:
     # Get post transform feature specification
     transformed_feature_spec = (
         tf_transform_output.transformed_feature_spec().copy()
