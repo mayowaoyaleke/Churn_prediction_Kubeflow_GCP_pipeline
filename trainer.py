@@ -77,7 +77,7 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
     )
 
     return dataset
-
+  
 
 #Build model
 def model_builder():
@@ -102,9 +102,8 @@ def run_fn(fn_args: FnArgs) -> None:
     train_set = _input_fn(fn_args.train_files, tf_transform_output, 10)
     eval_set = _input_fn(fn_args.eval_files, tf_transform_output, 10)
 
-    x_train, y_train = _input_fn(fn_args.train_files, fn_args.data_accessor,
-                               schema)
-    x_eval, y_eval = _input_fn(fn_args.eval_files,schema)
+    x_train, y_train = _input_fn(fn_args.train_files)
+    x_eval, y_eval = _input_fn(fn_args.eval_files)
 
     # Build the model
     model = model_builder()
