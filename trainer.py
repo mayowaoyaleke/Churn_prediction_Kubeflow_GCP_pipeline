@@ -102,8 +102,8 @@ def run_fn(fn_args: FnArgs) -> None:
     train_set = _input_fn(fn_args.train_files, tf_transform_output, 10)
     eval_set = _input_fn(fn_args.eval_files, tf_transform_output, 10)
 
-    x_train, y_train = _input_fn(fn_args.train_files,tf_transform_output,batch_size=32)
-    x_eval, y_eval = _input_fn(fn_args.eval_files,tf_transform_output,batch_size=32)
+    x_train, y_train = _input_fn(fn_args.train_files,tf_transform_output)
+    x_eval, y_eval = _input_fn(fn_args.eval_files,tf_transform_output)
 
     # Build the model
     model = model_builder()
