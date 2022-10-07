@@ -83,7 +83,7 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
 
 #Build model
 def model_builder():
-    model = RandomForestClassifier()
+    model = tfdf.keras.RandomForestModel()
     return model
 
 #Run
@@ -109,10 +109,11 @@ def run_fn(fn_args: FnArgs) -> None:
 
     # Build the model
     model = model_builder()
+    model.compile(metrics=['accuracy'])
     
     model.feature_keys = _FEATURE_KEYS
     model.label_key = _LABEL_KEY
-    model.fit()
+    model.fit(train_dataset)
     absl.logging.info(model)
 
     score = model.score(x_eval, y_eval)
