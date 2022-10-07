@@ -8,3 +8,4 @@ numpy
 pandas
 kfp
 sympy
+tensorflow_decision_forests

@@ -21,6 +21,8 @@ from tfx_bsl.tfxio import dataset_options
 from tensorflow_metadata.proto.v0 import schema_pb2
 import numpy as np
 import absl
+import tensorflow_decision_forests
+
 
 NUMERIC_FEATURE_KEYS = [
     'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
@@ -102,15 +104,15 @@ def run_fn(fn_args: FnArgs) -> None:
     train_set = _input_fn(fn_args.train_files, tf_transform_output, 10)
     eval_set = _input_fn(fn_args.eval_files, tf_transform_output, 10)
 
-    x_train, y_train = _input_fn(fn_args.train_files,tf_transform_output)
-    x_eval, y_eval = _input_fn(fn_args.eval_files,tf_transform_output)
+    train_dataset = _input_fn(fn_args.train_files,tf_transform_output)
+    eval_dataset = _input_fn(fn_args.eval_files,tf_transform_output)
 
     # Build the model
     model = model_builder()
     
     model.feature_keys = _FEATURE_KEYS
     model.label_key = _LABEL_KEY
-    model.fit(x_train, y_train)
+    model.fit()
     absl.logging.info(model)
 
     score = model.score(x_eval, y_eval)
