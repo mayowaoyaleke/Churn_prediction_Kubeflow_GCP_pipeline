@@ -21,7 +21,7 @@ from tfx_bsl.tfxio import dataset_options
 from tensorflow_metadata.proto.v0 import schema_pb2
 import numpy as np
 import absl
-import tensorflow_decision_forests
+import tensorflow_decision_forests as tfdf
 
 
 NUMERIC_FEATURE_KEYS = [
