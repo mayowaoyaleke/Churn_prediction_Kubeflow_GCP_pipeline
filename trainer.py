@@ -113,7 +113,7 @@ def run_fn(fn_args: FnArgs) -> None:
     
     model.feature_keys = _FEATURE_KEYS
     model.label_key = _LABEL_KEY
-    model.fit(train_dataset)
+    model.fit(train_dataset,check_dataset = False)
     absl.logging.info(model)
 
     score = model.score(x_eval, y_eval)
