@@ -113,11 +113,11 @@ def run_fn(fn_args: FnArgs) -> None:
     
     model.feature_keys = _FEATURE_KEYS
     model.label_key = _LABEL_KEY
-    model.fit(train_dataset)
+    model.fit(train_set, validation_steps = 32, validation_data = eval_set)
     absl.logging.info(model)
 
-    score = model.score(x_eval, y_eval)
-    absl.logging.info('Accuracy: %f', score)
+    evaluation = model.evaluate(eval_set, steps = 32)
+    absl.logging.info('Accuracy: %f', evaluation)
     
 
     # Export the model as a pickle named model.pkl. AI Platform Prediction expects
