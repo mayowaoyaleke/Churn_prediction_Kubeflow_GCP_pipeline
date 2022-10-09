@@ -22,7 +22,7 @@ from tensorflow_metadata.proto.v0 import schema_pb2
 import numpy as np
 import absl
 import tensorflow_decision_forests as tfdf
-
+import tensorflow_transform as tft
 
 NUMERIC_FEATURE_KEYS = [
     'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
@@ -86,6 +86,27 @@ def model_builder():
     model = tfdf.keras.RandomForestModel(check_dataset = False)
     return model
 
+
+def _get_serve_tf_examples_fn(model, tf_transform_output):
+    
+    model.tft_layer = tf_transform_output.transform_features_layer()
+    
+    @tf.function
+    def serve_tf_examples_fn(serialized_tf_examples):
+        
+        feature_spec = tf_transform_output.raw_feature_spec()
+        
+        feature_spec.pop("Exited")
+        
+        parsed_features = tf.io.parse_example(serialized_tf_examples, feature_spec)
+        
+        transformed_features = model.tft_layer(parsed_features)
+        
+        # get predictions using the transformed features
+        return model(transformed_features)
+        
+    return serve_tf_examples_fn
+
 #Run
 def run_fn(fn_args: FnArgs) -> None:
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
@@ -119,6 +140,16 @@ def run_fn(fn_args: FnArgs) -> None:
     evaluation = model.evaluate(eval_set, steps = 32)
     absl.logging.info('Accuracy: %f', evaluation)
     
+    signatures = {
+        'serving_default':
+        _get_serve_tf_examples_fn(model, 
+                                 tf_transform_output).get_concrete_function(
+                                    tf.TensorSpec(
+                                    shape=[None],
+                                    dtype=tf.string,
+                                    name='examples'))
+    }
+    model.save(fn_args.serving_model_dir, save_format='tf', signatures=signatures)
 
     # Export the model as a pickle named model.pkl. AI Platform Prediction expects
   # sklearn model artifacts to follow this naming convention.
