@@ -21,7 +21,8 @@ from tfx.types import Channel
 
 import tensorflow_model_analysis as tfma
 from tfx.components import Evaluator
-
+from tfx.components import Pusher
+from tfx.proto import pusher_pb2
 
 churn_transform_module_file = 'churn_transform.py'
 tuner_module_file = 'tuner.py'
@@ -122,6 +123,16 @@ def create_pipeline(
     baseline_model= model_resolver.outputs['model'],
     eval_config= eval_config)
     components.append(evaluator)
+
+    #Pusher
+    pusher = Pusher(model = trainer.outputs['model'],
+                model_blessing = evaluator.outputs['blessing'],
+                push_destination = pusher_pb2.PushDestination(
+                    filesystem = pusher_pb2.PushDestination.Filesystem(
+                        base_directory = 'serving_dir'
+                    ))
+                )
+
 
     return pipeline.Pipeline(
         pipeline_name = pipeline_name,
