@@ -132,7 +132,7 @@ def create_pipeline(
                         base_directory = serving_dir
                     ))
                 )
-
+    components.append(pusher)
 
     return pipeline.Pipeline(
         pipeline_name = pipeline_name,
