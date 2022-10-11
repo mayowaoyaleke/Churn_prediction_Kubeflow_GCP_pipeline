@@ -14,6 +14,13 @@ from tfx.components import Tuner
 from tfx.components import Trainer
 from tfx.proto import trainer_pb2
 
+from tfx.dsl.components.common.resolver import Resolver
+from tfx.types.standard_artifacts import Model, ModelBlessing
+from tfx.dsl.input_resolution.strategies.latest_blessed_model_strategy import LatestBlessedModelStrategy
+from tfx.types import Channel
+
+
+
 churn_transform_module_file = 'churn_transform.py'
 tuner_module_file = 'tuner.py'
 trainer_module_file = 'trainer.py'
@@ -77,6 +84,14 @@ def create_pipeline(
     eval_args= trainer_pb2.EvalArgs(splits = ['eval'],num_steps = 50)
     )
     components.append(trainer)
+
+    model_resolver = Resolver(
+    strategy_class= LatestBlessedModelStrategy,
+    model = Channel(type = Model),
+    model_blessing = Channel(type = ModelBlessing)
+    ).with_id("latest_blessed_model_resolver")
+    components.append(model_resolver)
+
 
     return pipeline.Pipeline(
         pipeline_name = pipeline_name,
