@@ -129,7 +129,7 @@ def create_pipeline(
                 model_blessing = evaluator.outputs['blessing'],
                 push_destination = pusher_pb2.PushDestination(
                     filesystem = pusher_pb2.PushDestination.Filesystem(
-                        base_directory = 'serving_dir'
+                        base_directory = serving_dir
                     ))
                 )
 
