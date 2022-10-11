@@ -19,6 +19,8 @@ from tfx.types.standard_artifacts import Model, ModelBlessing
 from tfx.dsl.input_resolution.strategies.latest_blessed_model_strategy import LatestBlessedModelStrategy
 from tfx.types import Channel
 
+import tensorflow_model_analysis as tfma
+from tfx.components import Evaluator
 
 
 churn_transform_module_file = 'churn_transform.py'
@@ -85,6 +87,7 @@ def create_pipeline(
     )
     components.append(trainer)
 
+    #resolver
     model_resolver = Resolver(
     strategy_class= LatestBlessedModelStrategy,
     model = Channel(type = Model),
@@ -92,6 +95,33 @@ def create_pipeline(
     ).with_id("latest_blessed_model_resolver")
     components.append(model_resolver)
 
+    #evaluator
+    eval_config = tfma.EvalConfig(
+    model_specs = [tfma.ModelSpec(label_key = 'Exited')],
+    slicing_specs = [tfma.SlicingSpec()],
+    metrics_specs = [
+        tfma.MetricsSpec(metrics = [
+            tfma.MetricConfig(class_name = "ExampleCount"),
+            tfma.MetricConfig(class_name = "AUC"),
+            tfma.MetricConfig(class_name = "FalsePositives"),
+            tfma.MetricConfig(class_name = "BinaryAccuracy",
+                              threshold = tfma.MetricThreshold(
+                                  value_threshold = tfma.GenericValueThreshold(
+                                      lower_bound = {"value": 0.5}
+                                  ),
+                                  change_threshold = tfma.GenericChangeThreshold(
+                                      direction = tfma.MetricDirection.HIGHER_IS_BETTER,
+                                      absolute = {"value": 0.001}
+                                  )
+                              ))
+        ])
+    ])
+
+    evaluator = Evaluator(examples=example_gen.outputs['examples'],
+    model= trainer.outputs['model'],
+    baseline_model= model_resolver.outputs['model'],
+    eval_config= eval_config)
+    components.append(evaluator)
 
     return pipeline.Pipeline(
         pipeline_name = pipeline_name,
