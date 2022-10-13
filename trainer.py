@@ -149,7 +149,8 @@ def run_fn(fn_args: FnArgs) -> None:
                                     dtype=tf.string,
                                     name='examples'))
     }
-    model.save(fn_args.serving_model_dir, save_format='tf', signatures=signatures)
+    # model.save(fn_args.serving_model_dir, save_format='tf', signatures=signatures)
+    model.save(fn_args.serving_model_dir,signatures=signatures)
 
     # Export the model as a pickle named model.pkl. AI Platform Prediction expects
   # sklearn model artifacts to follow this naming convention.
