@@ -4,7 +4,7 @@ from pyexpat import model
 # import kerastuner as kt
 from tensorflow import keras
 from typing import NamedTuple, Dict, Text, Any
-from tfx.components.trainer.fn_args_utils import FnArgs
+from tfx.components.trainer.fn_args_utils import FnArgs  
 import tensorflow as tf
 import tensorflow_transform as tft
 import sklearn
@@ -23,6 +23,10 @@ import numpy as np
 import absl
 import tensorflow_decision_forests as tfdf
 import tensorflow_transform as tft
+import tensorflow as tf
+from tensorflow import keras
+from keras.models import Sequential
+from keras.layers import Dense
 
 NUMERIC_FEATURE_KEYS = [
     'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
@@ -83,7 +87,11 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
 
 #Build model
 def model_builder():
-    model = tfdf.keras.RandomForestModel(check_dataset = False)
+    # model = tfdf.keras.RandomForestModel(check_dataset = False)
+    model = Sequential()
+    model.add(Dense(12,input_dim =8, activation="relu"))
+    model.add(Dense(12, activation="relu"))
+    model.add(Dense(2, activation= "sigmoid"))
     return model
 
 
@@ -130,7 +138,8 @@ def run_fn(fn_args: FnArgs) -> None:
 
     # Build the model
     model = model_builder()
-    model.compile(metrics=['accuracy'])
+    # TFDF - model.compile(metrics=['accuracy'])
+    model.compile(loss= "binary_crossentropy", optimizer="adam", metrics= ["accuracy"])
     
     model.feature_keys = _FEATURE_KEYS
     model.label_key = _LABEL_KEY
