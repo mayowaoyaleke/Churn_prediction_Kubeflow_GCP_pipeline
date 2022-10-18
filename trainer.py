@@ -53,15 +53,11 @@ def transformed_name(key):
 
 
 #Define Callbacks
-# stop_early = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience= 10)
+stop_early = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience= 10)
 
-#Load compressede data
+#Load compressed data
 def _gzip_reader_fn(filenames):
     return tf.data.TFRecordDataset(filenames, compression_type= 'GZIP')
-
-
-
-
 
 
 #Load data#################################################################################################
@@ -140,7 +136,7 @@ def run_fn(fn_args: FnArgs) -> None:
     model = model_builder()
     # TFDF - model.compile(metrics=['accuracy'])
     model.compile(loss= "binary_crossentropy", optimizer="adam", metrics= ["accuracy"])
-    
+
     model.feature_keys = _FEATURE_KEYS
     model.label_key = _LABEL_KEY
     model.fit(train_set, validation_steps = 32, validation_data = eval_set)
@@ -156,7 +152,7 @@ def run_fn(fn_args: FnArgs) -> None:
                                     tf.TensorSpec(
                                     shape=[None],
                                     dtype=tf.string,
-                                    name='examples'))
+                                    name='examples')) 
     }
     # model.save(fn_args.serving_model_dir, save_format='tf', signatures=signatures)
     model.save(fn_args.serving_model_dir,signatures=signatures, save_format='tf')

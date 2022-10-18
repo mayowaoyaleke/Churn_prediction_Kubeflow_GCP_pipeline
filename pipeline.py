@@ -24,7 +24,7 @@ from tfx.components import Evaluator
 from tfx.components import Pusher
 from tfx.proto import pusher_pb2
 
-churn_transform_module_file = 'churn_transform.py'
+churn_transform_module_file = 'churn_transform2.py'
 tuner_module_file = 'tuner.py'
 trainer_module_file = 'trainer.py'
 
