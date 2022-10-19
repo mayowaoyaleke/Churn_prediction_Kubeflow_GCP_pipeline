@@ -78,35 +78,35 @@ def get_model():
     input_features = []
     for key, dim in ONE_HOT_FEATURES.items():
         input_features.append(
-            tf.keras.Input(shape = (dim + 1,),
+            tf.keras.Input(shape = (1,),
             name = transformed_name(key))
         )
     #Scale Features
     for key in SCALE_FEATURES:
         input_features.append(
-            tf.kera  s.Input(shape = (dim + 1,),
+            tf.keras.Input(shape = (1,),
             name = transformed_name(key))
         )
 
     inputs = input_features
 
     d = tf.keras.layers.concatenate(inputs)
-    for _ in range(2):  
-        d = tf.keras.layers.Dense(8, activation='relu')(d) 
-        d = tf.keras.layers.Dense(64, activation='relu')(d)
-        d = tf.keras.layers.Dense(16, activation='sigmoid')(d)
-        outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(d)
+      
+    d = tf.keras.layers.Dense(8, activation='relu')(d) 
+    d = tf.keras.layers.Dense(64, activation='relu')(d)
+    d = tf.keras.layers.Dense(16, activation='sigmoid')(d)
+    outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(d)
 
 
-        keras_model = tf.keras.Model(inputs=inputs, outputs=outputs) 
+    keras_model = tf.keras.Model(inputs=inputs, outputs=outputs) 
 
-        keras_model.compile(   
+    keras_model.compile(   
                    optimizer=tf.keras.optimizers.Adam(1e-2), 
                     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  
                     metrics=[tf.keras.metrics.SparseCategoricalAccuracy(),
                              tf.keras.metrics.BinaryAccuracy(),
                              tf.keras.metrics.TruePositives()])
-        keras_model.summary()
+    keras_model.summary()
     return keras_model
 
 
