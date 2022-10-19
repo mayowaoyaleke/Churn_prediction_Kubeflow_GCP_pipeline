@@ -36,6 +36,12 @@ BUCKETIZE = {
     'Age' : 10
 }
 
+NUMERIC_FEATURE_KEYS = [
+    'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
+]
+
+CATEGORICAL_FEATURE_KEYS = ['Geography','Gender']
+
 SCALE_FEATURES = ['CreditScore','Age','Tenure','Balance','NumOfProducts','EstimatedSalary']
 
 LABEL_KEY = 'Exited'
@@ -153,7 +159,7 @@ def run_fn(fn_args: FnArgs) -> None:
 
     # Build the model
     model = get_model()
-    model.fit(train_set, 
+    model.fit(tf.expand_dims(train_set, axis= -1), 
               validation_steps = 32, 
               validation_data = eval_set)
     absl.logging.info(model)
