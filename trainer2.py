@@ -82,7 +82,7 @@ def get_model():
             name = transformed_name(key))
         )
     #Scale Features
-    for key in SCALE_FEATURES():
+    for key in SCALE_FEATURES:
         input_features.append(
             tf.keras.Input(shape = (dim + 1,),
             name = transformed_name(key))
