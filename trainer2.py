@@ -95,8 +95,10 @@ def get_model():
         )
 
     inputs = input_features
+    reshaped_narrative = tf.reshape(inputs[0] , [-1])
+    d = tf.keras.layers.Reshape((512, ), input_shape = (1, 512))(reshaped_narrative)
 
-    d = tf.keras.layers.concatenate(inputs)
+    # d = tf.keras.layers.concatenate(inputs)
       
     d = tf.keras.layers.Dense(8, activation='relu')(d) 
     d = tf.keras.layers.Dense(64, activation='relu')(d)
