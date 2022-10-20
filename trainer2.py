@@ -86,7 +86,7 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
 def get_model():
     #One-hot Categorical Features
     input_features = []
-    for key, dim in ONE_HOT_FEATURES:
+    for key, in ONE_HOT_FEATURES:
         input_features.append(
             tf.keras.Input(shape = (1,),
             name = transformed_name(key))
