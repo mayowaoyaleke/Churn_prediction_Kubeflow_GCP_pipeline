@@ -84,7 +84,7 @@ def get_model():
     input_features = []
     for key, dim in ONE_HOT_FEATURES.items():
         input_features.append(
-            tf.keras.Input(shape = (1,),
+            tf.keras.Input(shape = (dim + 1,),
             name = transformed_name(key))
         )
     #Scale Features
@@ -159,7 +159,8 @@ def run_fn(fn_args: FnArgs) -> None:
 
     # Build the model
     model = get_model()
-    model.fit(tf.expand_dims(train_set, axis= -1), 
+    model.fit(##tf.expand_dims(train_set, axis= -1)##,
+              train_set, 
               validation_steps = 32, 
               validation_data = eval_set)
     absl.logging.info(model)
