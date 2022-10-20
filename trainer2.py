@@ -28,9 +28,13 @@ from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense
 
-ONE_HOT_FEATURES   = {
+ONE_HOT_FEATURES2   = {
     'Gender':2,'Geography':3
 }
+
+ONE_HOT_FEATURES   = [
+    'Gender','Geography'
+]
 
 BUCKETIZE = {
     'Age' : 10
@@ -82,9 +86,9 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
 def get_model():
     #One-hot Categorical Features
     input_features = []
-    for key, dim in ONE_HOT_FEATURES.items():
+    for key, dim in ONE_HOT_FEATURES:
         input_features.append(
-            tf.keras.Input(shape = (dim + 1,),
+            tf.keras.Input(shape = (1,),
             name = transformed_name(key))
         )
     #Scale Features
