@@ -89,7 +89,6 @@ def get_model():
     for key in ONE_HOT_FEATURES:
         input_features.append(
             tf.keras.Input(shape = (1,),
-            dtype = "string",
             name = transformed_name(key))
         )
     #Scale Features
