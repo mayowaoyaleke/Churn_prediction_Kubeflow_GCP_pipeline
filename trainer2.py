@@ -108,14 +108,19 @@ def get_model():
 
     x = tf.keras.layers.Reshape((8,), input_shape = (1, 8))(inputs)
 
-    x = tf.keras.layers.Dense(9, activation='relu')(inputs) 
-    x = tf.keras.layers.Dense(9, activation='relu')(x)
-    x = tf.keras.layers.Dense(9, activation='sigmoid')(x)
+    # x = tf.keras.layers.Dense(9, activation='relu')(inputs) 
+    # x = tf.keras.layers.Dense(9, activation='relu')(x)
+    # x = tf.keras.layers.Dense(9, activation='sigmoid')(x)
 
-    outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)
 
-    keras_model = tf.keras.Model(inputs= inputs, outputs=outputs) 
+    x = tf.keras.layers.Dense(32, activation="relu")(inputs)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    output = tf.keras.layers.Dense(1)(x)
+    keras_model = tf.keras.Model(inputs= inputs, outputs=output) 
 
+    # outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)
+
+    
     keras_model.compile(   
                    optimizer=tf.keras.optimizers.Adam(1e-2), 
                     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  
