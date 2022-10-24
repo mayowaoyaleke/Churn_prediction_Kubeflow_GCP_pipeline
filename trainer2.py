@@ -100,14 +100,14 @@ def get_model():
         )
     
     inputs = input_features
-    all_inputs = tf.keras.layers.concatenate(inputs)
+    # all_inputs = tf.keras.layers.concatenate(inputs)
     #reshaped_narrative = tf.reshape(inputs[0], [-1])
 
     #x = tf.keras.layers.Reshape((3, 4), input_shape = (12,))(all_inputs)
 
     # d = tf.keras.layers.concatenate(inputs)
       
-    x = tf.keras.layers.Dense(8, activation='relu')(all_inputs) 
+    x = tf.keras.layers.Dense(8, activation='relu')(inputs) 
     x = tf.keras.layers.Dense(64, activation='relu')(x)
     x = tf.keras.layers.Dense(16, activation='sigmoid')(x)
 
