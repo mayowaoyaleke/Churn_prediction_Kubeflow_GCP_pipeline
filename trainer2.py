@@ -89,6 +89,7 @@ def get_model():
     for key in ONE_HOT_FEATURES:
         input_features.append(
             tf.keras.Input(shape = (1,),
+            dtype = "string",
             name = transformed_name(key))
         )
     #Scale Features
@@ -97,20 +98,22 @@ def get_model():
             tf.keras.Input(shape = (1,),
             name = transformed_name(key))
         )
-
+    
     inputs = input_features
-    reshaped_narrative = tf.reshape(inputs, [-1])
-    d = tf.keras.layers.Reshape((3, 4), input_shape = (12,))(reshaped_narrative)
+    all_inputs = tf.keras.layers.concatenate(inputs)
+    #reshaped_narrative = tf.reshape(inputs[0], [-1])
+
+    #x = tf.keras.layers.Reshape((3, 4), input_shape = (12,))(all_inputs)
 
     # d = tf.keras.layers.concatenate(inputs)
       
-    d = tf.keras.layers.Dense(8, activation='relu')(d) 
-    d = tf.keras.layers.Dense(64, activation='relu')(d)
-    d = tf.keras.layers.Dense(16, activation='sigmoid')(d)
-    outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(d)
+    x = tf.keras.layers.Dense(8, activation='relu')(all_inputs) 
+    x = tf.keras.layers.Dense(64, activation='relu')(x)
+    x = tf.keras.layers.Dense(16, activation='sigmoid')(x)
 
+    outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)
 
-    keras_model = tf.keras.Model(inputs=inputs, outputs=outputs) 
+    keras_model = tf.keras.Model(inputs= all_inputs, outputs=outputs) 
 
     keras_model.compile(   
                    optimizer=tf.keras.optimizers.Adam(1e-2), 
@@ -120,7 +123,7 @@ def get_model():
                              tf.keras.metrics.TruePositives()])
     keras_model.summary()
     return keras_model
-
+ 
 
 def _get_serve_tf_examples_fn(model, tf_transform_output):
     
