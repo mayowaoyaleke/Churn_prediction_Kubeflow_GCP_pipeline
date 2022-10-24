@@ -113,7 +113,7 @@ def get_model():
 
     outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)
 
-    keras_model = tf.keras.Model(inputs= all_inputs, outputs=outputs) 
+    keras_model = tf.keras.Model(inputs= inputs, outputs=outputs) 
 
     keras_model.compile(   
                    optimizer=tf.keras.optimizers.Adam(1e-2), 
