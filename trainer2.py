@@ -107,9 +107,9 @@ def get_model():
 
     # d = tf.keras.layers.concatenate(inputs)
       
-    x = tf.keras.layers.Dense(8, activation='relu')(inputs) 
-    x = tf.keras.layers.Dense(64, activation='relu')(x)
-    x = tf.keras.layers.Dense(16, activation='sigmoid')(x)
+    x = tf.keras.layers.Dense(9, activation='relu', input_shape = (1, 8))(inputs) 
+    x = tf.keras.layers.Dense(9, activation='relu')(x)
+    x = tf.keras.layers.Dense(9, activation='sigmoid')(x)
 
     outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)
 
