@@ -99,7 +99,7 @@ def get_model():
         )
     
     inputs = input_features
-    # all_inputs = tf.keras.layers.concatenate(inputs)
+    inputs = tf.keras.layers.concatenate(inputs)
     #reshaped_narrative = tf.reshape(inputs[0], [-1])
 
     #x = tf.keras.layers.Reshape((3, 4), input_shape = (12,))(all_inputs)
