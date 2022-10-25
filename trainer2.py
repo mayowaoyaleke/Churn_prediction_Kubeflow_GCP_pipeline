@@ -108,7 +108,7 @@ def get_model():
 
     x = tf.keras.layers.Reshape((8,), input_shape = (1, 8))(inputs)
 
-    x = tf.keras.layers.Dense(9, activation='relu')(inputs) 
+    x = tf.keras.layers.Dense(9, activation='relu')(x) 
     x = tf.keras.layers.Dense(9, activation='relu')(x)
     x = tf.keras.layers.Dense(9, activation='sigmoid')(x)
 
