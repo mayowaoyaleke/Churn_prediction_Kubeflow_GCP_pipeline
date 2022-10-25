@@ -100,25 +100,25 @@ def get_model():
     
     inputs = input_features
     inputs = tf.keras.layers.concatenate(inputs)
-    reshaped_narrative = tf.reshape(inputs[0], [-1])
+    # reshaped_narrative = tf.reshape(inputs[0], [-1])
 
     #x = tf.keras.layers.Reshape((3, 4), input_shape = (12,))(all_inputs)
 
     # d = tf.keras.layers.concatenate(inputs)
 
-    x = tf.keras.layers.Reshape((8,), input_shape = (1, 8))(reshaped_narrative)
+    x = tf.keras.layers.Reshape((8,), input_shape = (1, 8))(inputs)
 
-    # x = tf.keras.layers.Dense(9, activation='relu')(inputs) 
-    # x = tf.keras.layers.Dense(9, activation='relu')(x)
-    # x = tf.keras.layers.Dense(9, activation='sigmoid')(x)
+    x = tf.keras.layers.Dense(9, activation='relu')(inputs) 
+    x = tf.keras.layers.Dense(9, activation='relu')(x)
+    x = tf.keras.layers.Dense(9, activation='sigmoid')(x)
 
 
-    x = tf.keras.layers.Dense(32, activation="relu")(inputs)
-    x = tf.keras.layers.Dropout(0.5)(x)
-    output = tf.keras.layers.Dense(1)(x)
-    keras_model = tf.keras.Model(inputs= inputs, outputs=output) 
+    # x = tf.keras.layers.Dense(32, activation="relu")(inputs)
+    # x = tf.keras.layers.Dropout(0.5)(x)
+    # output = tf.keras.layers.Dense(1)(x)
 
-    # outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)
+    outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)
+    keras_model = tf.keras.Model(inputs= inputs, outputs=outputs) 
 
     
     keras_model.compile(   
