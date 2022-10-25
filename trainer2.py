@@ -92,7 +92,7 @@ def get_model():
             name = transformed_name(key))
         )
     #Scale Features
-    for key in SCALE_FEATURES:
+    for key in NUMERIC_FEATURE_KEYS:
         input_features.append(
             tf.keras.Input(shape = (1,),
             name = transformed_name(key))
@@ -106,11 +106,11 @@ def get_model():
 
     # d = tf.keras.layers.concatenate(inputs)
 
-    x = tf.keras.layers.Reshape((8,), input_shape = (1, 8))(inputs)
+    x = tf.keras.layers.Reshape((12,), input_shape = (1, 12))(inputs)
 
-    x = tf.keras.layers.Dense(9, activation='relu')(x) 
-    x = tf.keras.layers.Dense(9, activation='relu')(x)
-    x = tf.keras.layers.Dense(9, activation='sigmoid')(x)
+    x = tf.keras.layers.Dense(11, activation='relu')(x) 
+    x = tf.keras.layers.Dense(11, activation='relu')(x)
+    x = tf.keras.layers.Dense(11, activation='sigmoid')(x)
 
 
     # x = tf.keras.layers.Dense(32, activation="relu")(inputs)

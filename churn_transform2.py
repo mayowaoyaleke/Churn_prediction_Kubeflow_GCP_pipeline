@@ -46,7 +46,7 @@ def preprocessing_fn(inputs):
             index, num_label=dim +1
         )
 
-    for key in SCALE_FEATURES:
+    for key in NUMERIC_FEATURE_KEYS:
         outputs[transformed_name(key)] = tft.scale_to_z_score(inputs[key])
 
     outputs[transformed_name(LABEL_KEY)] = tf.cast(inputs[LABEL_KEY], tf.float32)
