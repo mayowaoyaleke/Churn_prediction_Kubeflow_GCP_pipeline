@@ -114,7 +114,7 @@ def get_model():
 
 
     # x = tf.keras.layers.Dense(32, activation="relu")(inputs)
-    # x = tf.keras.layers.Dropout(0.5)(x)
+    # x = tf.keras.layers.Dropout(0.5)(x)  
     # output = tf.keras.layers.Dense(1)(x)
 
     outputs = tf.keras.layers.Dense(3, activation = 'sigmoid')(x)

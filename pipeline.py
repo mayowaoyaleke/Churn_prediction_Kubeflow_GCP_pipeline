@@ -38,7 +38,7 @@ def create_pipeline(
 ):
     components= []
 
-    #example gen
+    #example gen#
     output = example_gen_pb2.Output(
         split_config= example_gen_pb2.SplitConfig(splits=[
             example_gen_pb2.SplitConfig.Split(name = 'train', hash_buckets = 8),
