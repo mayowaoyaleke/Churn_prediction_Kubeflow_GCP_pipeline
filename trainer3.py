@@ -85,13 +85,15 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
 #Build model
 def get_model():
     keras_model = tf.keras.Sequential([
+        tf.keras.layers.Dense(100),
+        tf.keras.layers.Dense(10),
         tf.keras.layers.Dense(1)
     ])
 
     
     keras_model.compile(   
                    optimizer=tf.keras.optimizers.Adam(1e-2), 
-                    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  
+                    loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),  
                     metrics=[tf.keras.metrics.SparseCategoricalAccuracy(),
                              tf.keras.metrics.BinaryAccuracy(),
                              tf.keras.metrics.TruePositives()])
@@ -145,7 +147,8 @@ def run_fn(fn_args: FnArgs) -> None:
     model.fit(##tf.expand_dims(train_set, axis= -1)##,
               train_set, 
               validation_steps = 32, 
-              validation_data = eval_set)
+              validation_data = eval_set,
+              epochs = 100)
     absl.logging.info(model)
 
     evaluation = model.evaluate(eval_set, steps = 32)
