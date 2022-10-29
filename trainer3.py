@@ -85,6 +85,7 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
 #Build model
 def get_model():
     keras_model = tf.keras.Sequential([
+        tf.keras.Input(shape=(12)),
         tf.keras.layers.Dense(100),
         tf.keras.layers.Dense(10),
         tf.keras.layers.Dense(1)
@@ -144,7 +145,7 @@ def run_fn(fn_args: FnArgs) -> None:
 
     # Build the model
     model = get_model()
-    model.build(input_shape = (12))
+
     model.fit(##tf.expand_dims(train_set, axis= -1)##,
               train_set, 
               validation_steps = 32, 
