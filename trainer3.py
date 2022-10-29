@@ -85,7 +85,7 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
 #Build model
 def get_model():
     keras_model = tf.keras.Sequential([
-        tf.keras.Dense(1)
+        tf.keras.layers.Dense(1)
     ])
 
     
