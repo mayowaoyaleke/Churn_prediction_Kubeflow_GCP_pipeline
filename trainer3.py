@@ -27,6 +27,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense
+from tensorflow.keras import layers
 
 ONE_HOT_FEATURES2   = {
     'Gender':2,'Geography':3
