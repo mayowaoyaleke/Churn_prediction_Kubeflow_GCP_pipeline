@@ -28,6 +28,17 @@ import tensorflow as tf
 from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense
+from keras import layers
+
+NUMERIC_FEATURE_KEYS = [
+    'Age','Balance','CreditScore','CustomerId','EstimatedSalary','HasCrCard','IsActiveMember','NumOfProducts','RowNumber','Tenure'
+]
+
+VOCAB_FEATURE_DICT = {
+    'Gender':2,'Geography':3,'Surname':1169
+}
+
+NUM_OOV_BUCKETS = 2
 
 ONE_HOT_FEATURES2   = {
     'Gender':2,'Geography':3
@@ -84,27 +95,28 @@ def _input_fn(file_pattern: str, tf_transform_output: tft.TFTransformOutput, num
   
 
 #Build model
-def get_model() -> tf.keras.Model:
-    input_features = []
-    for key in ONE_HOT_FEATURES:
-        input_features.append(
-            tf.keras.Input(shape = (1,),
-            name = transformed_name(key))
-        )
-    #Scale Features
-    for key in NUMERIC_FEATURE_KEYS:
-        input_features.append(
-            tf.keras.Input(shape = (1,),
-            name = transformed_name(key))
-        )
+def get_model():
+    input_numeric = [
+        tf.keras.layers.Input(name = transformed_name(colname), shape=(1,), dtype=tf.float32) for colname in NUMERIC_FEATURE_KEYS
+    ]
 
-    inputs = [tf.keras.layers.Input(shape=(1,), name = f) for f in input_features ]
-    d = keras.layers.concatenate(inputs)
-    for _ in range(2):
-        d = tf.keras.layers.Dense(12, activation = 'relu') (d)
-    outputs = tf.keras.layers.Dense(1)(d)
+    input_categorical = [
+        tf.keras.layers.Input(name = transformed_name(colname), shape=(vocab_size + NUM_OOV_BUCKETS,), dtype = tf.float32) for colname, vocab_size in VOCAB_FEATURE_DICT.items()
+    ]
 
-    keras_model = tf.keras.Model(inputs= inputs, outputs= outputs)
+    input_numeric = tf.keras.layers.concatenate(input_numeric)
+    input_categorical = tf.keras.layers.concatenate(input_categorical)
+
+    deep = tf.keras.layers.concatenate([input_numeric,input_categorical])
+
+    deep = tf.keras.layers.Dense(12, activation='relu')(deep)
+    deep = tf.keras.layers.Dense(24, activation = 'relu')(deep)
+
+    output_layer =tf.keras.layers.Dense(1, activation = 'sigmoid')(deep)
+
+    input_layers = input_numeric + input_categorical
+
+    keras_model = tf.keras.Model(input_layers, output_layer)
 
     
     keras_model.compile(   

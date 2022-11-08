@@ -26,7 +26,7 @@ from tfx.proto import pusher_pb2
 
 churn_transform_module_file = 'churn_transform2.py'
 tuner_module_file = 'tuner.py'
-trainer_module_file = 'trainer3.py'
+trainer_module_file = 'trainer4.py'
 
 def create_pipeline(
     pipeline_name,
@@ -135,7 +135,7 @@ def create_pipeline(
     components.append(pusher)
 
     return pipeline.Pipeline(
-        pipeline_name = pipeline_name,
+        pipeline_name = pipeline_name, 
         pipeline_root = pipeline_root,
         components = components,
         metadata_connection_config = metadata_connection_config,
